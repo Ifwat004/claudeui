@@ -1,0 +1,191 @@
+/* ==========================================================================
+   claude-slate.css
+
+   Cool slate ground, amber accent, sage secondary. Deliberately unlike
+   Claude's default warm-clay palette so the window is identifiable at a
+   glance on a multi-monitor setup.
+
+   Retune the whole thing by editing PALETTE. Everything below reads from it.
+   Save the file and the injector re-applies instantly.
+   ========================================================================== */
+
+:root {
+  /* ---- PALETTE ---------------------------------------------------------- */
+  --t-ground:   #0d0e13;   /* app canvas                    */
+  --t-surface:  #14161d;   /* sidebar, panels               */
+  --t-raised:   #1c1f28;   /* cards, hover, input wells     */
+  --t-border:   #262a36;   /* dividers, outlines            */
+  --t-text:     #e4e3e9;   /* primary type                  */
+  --t-muted:    #93929f;   /* secondary type, placeholders  */
+  --t-accent:   #e0a233;   /* buttons, active state, focus  */
+  --t-accent-2: #6fb5a0;   /* links, info                   */
+  --t-danger:   #e06c5f;   /* destructive, errors           */
+
+  --t-radius: 10px;
+
+  /* Tells the engine to render native widgets, scrollbars and form
+     controls dark. Cheap, and fixes a lot on its own. */
+  color-scheme: dark;
+}
+
+/* ==========================================================================
+   1. TOKEN OVERRIDES
+
+   This is the high-leverage part. Claude's UI is tokenised, so retinting
+   these retints almost everything without touching a single class name.
+
+   The names below are my best guess at their token set. Confirm the real
+   ones by running the injector with --dump-tokens, then fix any that don't
+   match. Unknown properties are simply ignored, so a wrong guess costs
+   nothing.
+   ========================================================================== */
+
+:root,
+html,
+body,
+[data-mode='dark'],
+[data-theme='dark'],
+.dark {
+  --bg-000: var(--t-ground);
+  --bg-100: var(--t-ground);
+  --bg-200: var(--t-surface);
+  --bg-300: var(--t-raised);
+  --bg-400: var(--t-raised);
+  --bg-500: var(--t-border);
+
+  --text-000: var(--t-text);
+  --text-100: var(--t-text);
+  --text-200: var(--t-muted);
+  --text-300: var(--t-muted);
+  --text-400: var(--t-muted);
+  --text-500: var(--t-muted);
+
+  --border-100: var(--t-border);
+  --border-200: var(--t-border);
+  --border-300: var(--t-border);
+  --border-400: var(--t-border);
+
+  --accent-main-000: var(--t-accent);
+  --accent-main-100: var(--t-accent);
+  --accent-main-200: var(--t-accent);
+  --accent-secondary-000: var(--t-accent-2);
+  --accent-secondary-100: var(--t-accent-2);
+  --accent-pro-000: var(--t-accent-2);
+  --accent-pro-100: var(--t-accent-2);
+
+  --danger-000: var(--t-danger);
+  --danger-100: var(--t-danger);
+  --danger-200: var(--t-danger);
+
+  --oncolor-100: #14100a;  /* type that sits on top of the accent */
+}
+
+/* ==========================================================================
+   2. STRUCTURAL RULES
+
+   These target elements rather than class names, so they survive Anthropic
+   reshuffling their markup. This section is the part that won't rot.
+   ========================================================================== */
+
+html,
+body {
+  background-color: var(--t-ground) !important;
+  color: var(--t-text);
+}
+
+::selection {
+  background-color: color-mix(in srgb, var(--t-accent) 32%, transparent);
+  color: var(--t-text);
+}
+
+/* Scrollbars. Thin, low-contrast until you're actually on them. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--t-border) transparent;
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--t-border);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--t-muted);
+  background-clip: content-box;
+}
+::-webkit-scrollbar-corner { background: transparent; }
+
+/* Keyboard focus stays visible and on-palette. */
+:focus-visible {
+  outline: 2px solid var(--t-accent) !important;
+  outline-offset: 2px !important;
+  border-radius: 4px;
+}
+
+/* Code. Slightly lifted off the canvas, mono at a readable size. */
+pre,
+code,
+kbd,
+samp {
+  font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.875em;
+}
+pre {
+  background-color: var(--t-surface) !important;
+  border: 1px solid var(--t-border) !important;
+  border-radius: var(--t-radius) !important;
+}
+:not(pre) > code {
+  background-color: var(--t-raised);
+  color: var(--t-accent);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+}
+
+/* Tables get real rules instead of floating rows. */
+table { border-collapse: collapse; }
+th, td { border: 1px solid var(--t-border) !important; }
+thead th { background-color: var(--t-surface) !important; }
+
+/* Blockquotes marked with the accent rather than a grey bar. */
+blockquote {
+  border-left: 2px solid var(--t-accent) !important;
+  color: var(--t-muted);
+}
+
+hr { border-color: var(--t-border) !important; }
+
+a { color: var(--t-accent-2); }
+
+/* Placeholders shouldn't read as disabled text. */
+::placeholder { color: var(--t-muted) !important; opacity: 1; }
+
+/* Native form controls, in case any slip through untokenised. */
+input, textarea, select, button { color: inherit; }
+
+/* ==========================================================================
+   3. OPTIONAL: TYPOGRAPHY
+
+   Uncomment to override the app font. Only names a family you actually have
+   installed, since a missing one silently falls through to the stack.
+   ========================================================================== */
+
+/*
+body, input, textarea, button, select {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+*/
+
+/* Comfortable measure for long replies. Raise or drop as you like. */
+/*
+main p, main li { max-width: 72ch; }
+*/
+
+/* ==========================================================================
+   4. YOUR RULES
+
+   Once you've found real class names in DevTools, put them here. Anything
+   in this section is yours and won't collide with the above.
+   ========================================================================== */
